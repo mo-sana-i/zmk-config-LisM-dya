@@ -1,7 +1,9 @@
 manifest:
+  defaults:
+    revision: main
   remotes:
-    - name: zmkfirmware
-      url-base: https://github.com/zmkfirmware
+    - name: cormoran
+      url-base: https://github.com/cormoran
     - name: sekigon-gonnoc
       url-base: https://github.com/sekigon-gonnoc
     - name: caksoylar
@@ -9,20 +11,47 @@ manifest:
     - name: 4mplelab
       url-base: https://github.com/4mplelab
   projects:
+    # ZMK 本体を cormoran フォーク (DYA Studio 用カスタム RPC 入り) に変更
+    # NOTE(phase2): ブランチ名は出典で表記が揺れている (moNa2記事: v0.3-branch+dya /
+    #   ZaruBall手順: v0.3-branch+custom-studio-protocol+activity /
+    #   モジュールREADME: v0.3+custom-studio-protocol)。ビルド前に cormoran/zmk の
+    #   実在ブランチを確認して確定すること。
     - name: zmk
-      remote: zmkfirmware
-      # main branch @ 2026-08-06 (Zephyr v4.1.0+zmk-fixes)
-      revision: 268b1b1e82150460f00fd701bcd08583d5c75d29
+      remote: cormoran
+      revision: v0.3-branch+dya
       import: app/west.yml
+    # DYA Studio モジュール群 (すべて cormoran)
+    - name: zmk-module-ble-management
+      remote: cormoran
+      revision: main
+    - name: zmk-module-battery-history
+      remote: cormoran
+      revision: main
+    - name: zmk-module-settings-rpc
+      remote: cormoran
+      revision: main
+    - name: zmk-module-runtime-input-processor
+      remote: cormoran
+      revision: main
+    - name: zmk-behavior-runtime-sensor-rotate
+      remote: cormoran
+      revision: main
+    # runtime-input-processor が設定永続化バックエンドとして必要とする
+    - name: zmk-feature-custom-settings
+      remote: cormoran
+      revision: main
+    # 既存ドライバ/ウィジェット (現行リポから引き継ぎ)
     - name: zmk-driver-paw3222
       remote: sekigon-gonnoc
       revision: main
+      # NOTE(phase2): v0.3系 (Zephyr 3.5) でビルドできるか未確認
     - name: zmk-rgbled-widget
       remote: caksoylar
-      # v0.3 support was split out to v0.3-branch; main now tracks ZMK main/Zephyr 4.x
-      revision: main
+      # 現行 west.yml のコメント通り、v0.3 サポートは v0.3-branch に分離されている
+      revision: v0.3-branch
     - name: zmk-feature-charge-indicator
       remote: 4mplelab
       revision: main
+      # NOTE(phase2): v0.3系でビルドできるか未確認
   self:
     path: config
