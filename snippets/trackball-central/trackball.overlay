@@ -17,21 +17,40 @@
 };
 
 // ペリフェラル（split経由）のリスナーを有効化
+// DYA: runtime input processor を追加し、左手トラックボールも
+// DYA Studio から調整可能にする。
+// 注意: 現行ファームでは peripheral_listener にプロセッサ/scroller は
+// 未設定だった。scroller の追加は新規の挙動になるため、フェーズ2で要確認。
 &peripheral_listener {
     status = "okay";
+    input-processors =
+        <&mouse_runtime_input_processor>;
+
+    scroller {
+        layers = <2>;
+        input-processors =
+            <&zip_xy_to_scroll_mapper>,
+            <&zip_scroll_scaler 1 16>,
+            <&scroll_runtime_input_processor>;
+    };
 };
 
 // セントラルのリスナーを有効化し、deviceを紐付け
+// DYA: 既存チェーンの末尾に runtime processor を追加する。
+// スクロール倍率は当面、現行の zip_scroll_scaler 1/16 が担い、
+// scroll_runtime_input_processor (デフォルト 1/1) で追加調整する想定。
 &central_listener {
     status = "okay";
     device = <&trackball_central>;
     input-processors = 
-        <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>;
+        <&zip_xy_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>,
+        <&mouse_runtime_input_processor>;
 
     scroller {
         layers = <2>;
         input-processors = 
             <&zip_xy_to_scroll_mapper>,
-            <&zip_scroll_scaler 1 16>;
+            <&zip_scroll_scaler 1 16>,
+            <&scroll_runtime_input_processor>;
     };
 };
