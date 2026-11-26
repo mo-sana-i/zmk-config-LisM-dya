@@ -37,9 +37,12 @@ manifest:
       remote: cormoran
       revision: main
     # runtime-input-processor が設定永続化バックエンドとして必要とする
+    # NOTE: main の Kconfig は Zephyr 4.x 専用の configdefault を使うため v0.3 (Zephyr 3.5) では
+    #   Kconfig 構文エラーになる。configdefault 導入コミット (2026-07-08) の直前に固定する。
+    #   その変更の効果 (MAIN_STACK_SIZE 既定 2048) は lism_right.conf で明示設定して補う。
     - name: zmk-feature-custom-settings
       remote: cormoran
-      revision: main
+      revision: 56ad426038
     # 既存ドライバ/ウィジェット (現行リポから引き継ぎ)
     - name: zmk-driver-paw3222
       remote: sekigon-gonnoc
