@@ -12,13 +12,12 @@ manifest:
       url-base: https://github.com/4mplelab
   projects:
     # ZMK 本体を cormoran フォーク (DYA Studio 用カスタム RPC 入り) に変更
-    # NOTE(phase2): ブランチ名は出典で表記が揺れている (moNa2記事: v0.3-branch+dya /
-    #   ZaruBall手順: v0.3-branch+custom-studio-protocol+activity /
-    #   モジュールREADME: v0.3+custom-studio-protocol)。ビルド前に cormoran/zmk の
-    #   実在ブランチを確認して確定すること。
+    # 土台は main+dya (Zephyr 4.1)。モジュール群の現行 main が Zephyr 4.x 前提のため、
+    # v0.3 系 (Zephyr 3.5) では Kconfig/CMake の互換問題が続いた (2026-11-26 のビルド #10/#12)。
+    # main+dya の Zephyr は現行ファームと同じ v4.1.0+zmk-fixes。
     - name: zmk
       remote: cormoran
-      revision: v0.3-branch+dya
+      revision: main+dya
       import: app/west.yml
     # DYA Studio モジュール群 (すべて cormoran)
     - name: zmk-module-ble-management
@@ -37,12 +36,10 @@ manifest:
       remote: cormoran
       revision: main
     # runtime-input-processor が設定永続化バックエンドとして必要とする
-    # NOTE: main の Kconfig は Zephyr 4.x 専用の configdefault を使うため v0.3 (Zephyr 3.5) では
-    #   Kconfig 構文エラーになる。configdefault 導入コミット (2026-07-08) の直前に固定する。
-    #   その変更の効果 (MAIN_STACK_SIZE 既定 2048) は lism_right.conf で明示設定して補う。
+    # 土台が Zephyr 4.1 (main+dya) なので main のまま使える (configdefault / ROM_SECTIONS は 4.x の機能)。
     - name: zmk-feature-custom-settings
       remote: cormoran
-      revision: 56ad426038
+      revision: main
     # 既存ドライバ/ウィジェット (現行リポから引き継ぎ)
     - name: zmk-driver-paw3222
       remote: sekigon-gonnoc
@@ -50,8 +47,8 @@ manifest:
       # NOTE(phase2): v0.3系 (Zephyr 3.5) でビルドできるか未確認
     - name: zmk-rgbled-widget
       remote: caksoylar
-      # 現行 west.yml のコメント通り、v0.3 サポートは v0.3-branch に分離されている
-      revision: v0.3-branch
+      # main が ZMK main / Zephyr 4.x 追従 (現行ファームと同じ指定)
+      revision: main
     - name: zmk-feature-charge-indicator
       remote: 4mplelab
       revision: main
